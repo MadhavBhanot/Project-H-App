@@ -144,7 +144,7 @@ git checkout -b feature-name
 git commit -m "Add new feature"
 ```
 
--Use a descriptive message for your commit explaining the changes you made. 4. **Push the changes to your branch:**
+- Use a descriptive message for your commit explaining the changes you made. 4. **Push the changes to your branch:**
 
 ```bash
 git push origin feature-name
