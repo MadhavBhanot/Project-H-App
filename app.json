@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "clerk",
+    "slug": "clerk",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "clerk",
+    "userInterfaceStyle": "automatic",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
