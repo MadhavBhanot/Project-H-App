@@ -66,8 +66,8 @@ Before you start, ensure you have the following installed:
 1. Clone the repository:
 
 ```bash
-   git clone https://github.com/yourusername/edu-career-app.git
-   cd edu-career-app
+git clone https://github.com/yourusername/edu-career-app.git
+cd edu-career-app
 ```
 
 2. Install backend dependencies:
