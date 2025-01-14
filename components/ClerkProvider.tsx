@@ -1,7 +1,6 @@
-
 import { ClerkProvider as BaseClerkProvider } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
-import { useRouter } from "expo-router";
+import { useUser } from '@clerk/clerk-expo';
 
 const tokenCache = {
   async getToken(key: string) {
@@ -21,18 +20,28 @@ const tokenCache = {
 };
 
 export function ClerkProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-
   return (
     <BaseClerkProvider
       tokenCache={tokenCache}
       publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
-      afterSignInUrl="/(tabs)"
-      afterSignUpUrl="/(tabs)"
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
     >
       {children}
     </BaseClerkProvider>
   );
 }
+
+export const updateUserProfile = async (userData: {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+}) => {
+  try {
+    const { user } = useUser();
+    if (!user) throw new Error("No user found");
+    await user.update(userData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error };
+  }
+};

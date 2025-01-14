@@ -2,10 +2,18 @@ import { Redirect, Tabs } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useEffect } from 'react';
+import { router } from 'expo-router';
 
 export default function TabLayout() {
   const { isSignedIn, isLoaded } = useAuth();
   const theme = useColorScheme();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.replace('/(auth)/signin');
+    }
+  }, [isSignedIn, isLoaded]);
 
   if (!isLoaded) {
     return null;

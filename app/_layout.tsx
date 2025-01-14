@@ -1,8 +1,9 @@
 import { Stack } from 'expo-router';
 import { ClerkProvider } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
-import Constants from "expo-constants";
-import { Platform } from 'react-native';
+import { useEffect } from 'react';
+import { useRouter, useSegments } from 'expo-router';
+import { useAuth } from '@clerk/clerk-expo';
 
 const tokenCache = {
   async getToken(key: string) {
@@ -21,46 +22,36 @@ const tokenCache = {
   },
 };
 
+function InitialLayout() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const inTabsGroup = segments[0] === '(tabs)';
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (isSignedIn && inAuthGroup) {
+      // Redirect to home if user is signed in and tries to access auth screens
+      router.replace('/(tabs)');
+    } else if (!isSignedIn && inTabsGroup) {
+      // Redirect to sign in if user is not signed in and tries to access protected screens
+      router.replace('/(auth)/signin');
+    }
+  }, [isSignedIn, segments, isLoaded]);
+
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
 export default function RootLayout() {
   return (
     <ClerkProvider
       publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       tokenCache={tokenCache}
-      appearance={{
-        baseTheme: Platform.OS === 'web' ? 'light' : undefined,
-        variables: {
-          colorPrimary: '#6C63FF',
-          colorBackground: '#ffffff',
-          colorText: '#000000',
-        },
-        elements: {
-          providerIcon: {
-            filter: 'none'
-          },
-          formButtonPrimary: {
-            fontSize: '16px',
-            textTransform: 'none',
-            borderRadius: '12px',
-            backgroundColor: '#6C63FF',
-            '&:hover': {
-              backgroundColor: '#5b54d6'
-            }
-          },
-          card: {
-            boxShadow: 'none',
-            backgroundColor: 'transparent'
-          }
-        }
-      }}
     >
-      <Stack 
-        screenOptions={{ 
-          headerShown: false,
-          ...(Platform.OS === 'web' ? {
-            animation: 'none'
-          } : {})
-        }} 
-      />
+      <InitialLayout />
     </ClerkProvider>
   );
 }
